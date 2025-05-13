@@ -173,7 +173,7 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({ data, onChange })
               </div>
             ))}
             
-            {experience.bullets.length > 0 && bullet => bullet.trim()).length === 0 && (
+            {experience.bullets.length > 0 && experience.bullets.filter(bullet => bullet.trim()).length === 0 && (
               <div className="flex items-center mt-2 text-yellow-600 text-sm">
                 <AlertTriangle className="h-4 w-4 mr-1" />
                 <span>Don't leave empty bullet points - add details or remove them.</span>
