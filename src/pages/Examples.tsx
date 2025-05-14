@@ -53,7 +53,8 @@ const Examples = () => {
       toast({
         title: "PDF Downloaded",
         description: "Your example resume has been downloaded",
-        variant: "success",
+        // Fixed: Changed "success" to "default" since it's not a valid variant
+        variant: "default",
       });
     }, 1500);
   };
