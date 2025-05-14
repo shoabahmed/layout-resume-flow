@@ -33,6 +33,7 @@ export interface Template {
   id: string;
   name: string;
   color: string;
+  tags?: string[];
 }
 
 export interface ResumeData {

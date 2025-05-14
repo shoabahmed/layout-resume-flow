@@ -1,6 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { useSearchParams } from 'react-router-dom';
 import { 
   Download, Eye, Settings, PenLine, 
   Check, HelpCircle, 
@@ -17,20 +18,32 @@ import ResumePreview from '@/components/builder/ResumePreview';
 import TemplateSelector from '@/components/builder/TemplateSelector';
 
 import { initialResumeData } from '@/lib/initialData';
+import { findTemplateById, getAllTemplates } from '@/lib/templateSamples';
 import { ResumeData, Template } from '@/types/resume';
-
-const templates = [
-  { id: 'modern', name: 'Modern', color: 'blue' },
-  { id: 'professional', name: 'Professional', color: 'gray' },
-  { id: 'creative', name: 'Creative', color: 'purple' },
-  { id: 'simple', name: 'Simple', color: 'green' }
-];
 
 const Builder = () => {
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [resumeData, setResumeData] = useState<ResumeData>(initialResumeData);
+  const [templates] = useState<Template[]>(getAllTemplates());
   const [activeTemplate, setActiveTemplate] = useState<Template>(templates[0]);
   const [isFullPreview, setIsFullPreview] = useState(false);
+
+  // Handle template from URL parameter
+  useEffect(() => {
+    const templateId = searchParams.get('template');
+    if (templateId) {
+      const template = findTemplateById(templateId);
+      if (template) {
+        setActiveTemplate(template);
+        toast({
+          title: "Template loaded",
+          description: `You're now using the ${template.name} template`,
+          duration: 2000
+        });
+      }
+    }
+  }, [searchParams, toast]);
 
   const handleDataChange = (newData: Partial<ResumeData>) => {
     setResumeData(prev => ({
@@ -81,6 +94,18 @@ const Builder = () => {
     });
     
     setTimeout(() => {
+      // In a real implementation, this would use a library like react-pdf or call a backend API
+      // For demonstration purposes, we're creating a dummy PDF download
+      const pdfBlob = new Blob(['PDF content would go here'], { type: 'application/pdf' });
+      const url = URL.createObjectURL(pdfBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `resume-${Date.now()}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
       toast({
         title: "Resume exported",
         description: "Your resume has been downloaded as a PDF.",
